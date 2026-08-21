@@ -41,5 +41,120 @@ namespace AgendaContactosAPI.Controllers
                 });
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> ObtenerContactos()
+        {
+            try
+            {
+                var contactos = await _repository.ObtenerContactosAsync();
+
+                return Ok(contactos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    mensaje = ex.Message
+                });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ObtenerContactoPorId(int id)
+        {
+            try
+            {
+                var contacto =
+                    await _repository.ObtenerContactoPorIdAsync(id);
+
+                if (contacto == null)
+                {
+                    return NotFound(new
+                    {
+                        mensaje = "Contacto no encontrado."
+                    });
+                }
+
+                return Ok(contacto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    mensaje = ex.Message
+                });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ActualizarContacto(
+    int id,
+    Contacto contacto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                bool resultado =
+                    await _repository.ActualizarContactoAsync(
+                        id,
+                        contacto);
+
+                if (!resultado)
+                {
+                    return NotFound(new
+                    {
+                        mensaje = "Contacto no encontrado."
+                    });
+                }
+
+                return Ok(new
+                {
+                    mensaje = "Contacto actualizado correctamente."
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    mensaje = ex.Message
+                });
+           
+            }
+        }
+        [HttpDelete("{id}")]
+
+            public async Task<IActionResult> EliminarContacto(int id)
+            {
+                try
+                {
+                    bool resultado =
+                        await _repository.EliminarContactoAsync(id);
+
+                    if (!resultado)
+                    {
+                        return NotFound(new
+                        {
+                            mensaje = "Contacto no encontrado."
+                        });
+                    }
+
+                    return Ok(new
+                    {
+                        mensaje = "Contacto eliminado correctamente."
+                    });
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, new
+                    {
+                        mensaje = ex.Message
+                    });
+                }
+            }
+        }
+
     }
-}
